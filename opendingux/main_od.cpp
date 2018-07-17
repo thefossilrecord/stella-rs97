@@ -44,10 +44,10 @@ void graphics_paint(void) {
 		x=0;
 		y=0; 
 		W=320;
-		H=240;
+		H=480;
 		ix=(SYSVID_WIDTH<<16)/W;
 		iy=(SYSVID_HEIGHT<<16)/H;
-		xfp = 300;yfp = 1;
+		//xfp = 300;yfp = 1;
 
 		do   
 		{
@@ -61,6 +61,31 @@ void graphics_paint(void) {
 		} while (--H);
 	}
 	else { // Original show
+		// x,y for window starts at 24,44.
+		// Right edge is 81 pixels (to avoid pink vertical strip).
+		// Bottom edge is 38 pixels.
+		x=24;
+		y=44;
+		W=320-(81 + 24);
+		H=480- (44 + (38 * 2));
+		ix=(SYSVID_WIDTH<<16)/W;
+		iy=(SYSVID_HEIGHT<<16)/H;
+		xfp = 300;yfp = 1;
+		buffer_scr = buffer_scr + (y * 320) + x;
+
+		do
+		{
+			unsigned char *buffer_mem=(buffer_flip+((y>>16)*SYSVID_WIDTH));
+			W=320-(81 + 24); x=0;
+			do {
+				*buffer_scr++=stella_palette[buffer_mem[x>>16]];
+				x+=ix;
+			} while (--W);
+			// now 'x' is 296
+			buffer_scr = buffer_scr + (81 + 24);
+			y+=iy;
+		} while (--H);
+/*
 		x=((screen->w - SYSVID_WIDTH)/2);
 		y=((screen->h - SYSVID_HEIGHT)/2); 
 		W=SYSVID_WIDTH;
@@ -71,6 +96,7 @@ void graphics_paint(void) {
 		
 		buffer_scr += (y)*320;
 		buffer_scr += (x);
+
 		do   
 		{
 			unsigned char *buffer_mem=(buffer_flip+((y>>16)*SYSVID_WIDTH));
@@ -82,6 +108,7 @@ void graphics_paint(void) {
 			y+=iy;
 			buffer_scr += actualScreen->pitch - 320 - SYSVID_WIDTH;
 		} while (--H);
+*/
 	}
 	
 	pastFPS++;
@@ -116,7 +143,7 @@ void initSDL(void) {
 	}
 	atexit(SDL_Quit);
 
-	actualScreen = SDL_SetVideoMode(320, 240, 16, SDL_DOUBLEBUF | SDL_HWSURFACE );
+	actualScreen = SDL_SetVideoMode(320, 480, 16, SDL_HWSURFACE );
 	if(actualScreen == NULL) {
 		fprintf(stderr, "Couldn't set video mode: %s\n", SDL_GetError());
 		exit(1);
@@ -138,17 +165,17 @@ void initSDL(void) {
 	}
 
 	// Init new layer to add background and text
-	layer = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, 0,0,0,0);
+	layer = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 480, 16, 0,0,0,0);
 	if(layer == NULL) {
 		fprintf(stderr, "Couldn't create surface: %s\n", SDL_GetError());
 		exit(1);
 	}
-	layerback = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, 0,0,0,0);
+	layerback = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 480, 16, 0,0,0,0);
 	if(layerback == NULL) {
 		fprintf(stderr, "Couldn't create surface: %s\n", SDL_GetError());
 		exit(1);
 	}
-	layerbackgrey = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, 0,0,0,0);
+	layerbackgrey = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 480, 16, 0,0,0,0);
 	if(layerbackgrey == NULL) {
 		fprintf(stderr, "Couldn't create surface: %s\n", SDL_GetError());
 		exit(1);
@@ -156,10 +183,10 @@ void initSDL(void) {
 
 
 	// Init sound
-	spec.freq = 44100;
+	spec.freq = 22050;
 	spec.format = AUDIO_U8;
 	spec.channels = 1;
-	spec.samples = 44100/60;
+	spec.samples = 1024;//22050/60;
 	spec.callback = audio_callback;
 	spec.userdata = NULL;
 

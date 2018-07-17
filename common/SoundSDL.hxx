@@ -19,9 +19,9 @@
 #ifndef SOUNDSDL_HXX
 #define SOUNDSDL_HXX
 
-#include "Sound.hxx"
-#include "bspf.hxx"
-#include "MediaSrc.hxx"
+#include "../emucore/Sound.hxx"
+#include "../emucore/bspf.hxx"
+#include "../emucore/MediaSrc.hxx"
 
 //JGD #include "TiaSnd.hxx"
 

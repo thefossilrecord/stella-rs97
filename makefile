@@ -1,6 +1,6 @@
 # Define compilation type
 OSTYPE=msys
-#OSTYPE=a320-od
+OSTYPE=a320od
 #OSTYPE=gcw0-od
 
 PRGNAME     = stella-od
@@ -14,14 +14,14 @@ CCP          = g++
 LD          = g++
 else
 ifeq "$(OSTYPE)" "a320od"	
-TOOLCHAIN = /opt/opendingux-toolchain/usr
+TOOLCHAIN = /opt/rs97-toolchain
 else
 TOOLCHAIN = /opt/gcw0-toolchain/usr
 endif
 EXESUFFIX = .dge
-CC = $(TOOLCHAIN)/bin/mipsel-linux-gcc
-CCP = $(TOOLCHAIN)/bin/mipsel-linux-g++
-LD = $(TOOLCHAIN)/bin/mipsel-linux-g++
+CC = $(TOOLCHAIN)/bin/mipsel-buildroot-linux-musl-gcc
+CCP = $(TOOLCHAIN)/bin/mipsel-buildroot-linux-musl-g++
+LD = $(TOOLCHAIN)/bin/mipsel-buildroot-linux-musl-g++
 endif
 
 # add SDL dependencies
@@ -39,7 +39,7 @@ LDFLAGS     = -L$(SDL_LIB)  -lmingw32 -lSDLmain -lSDL -mwindows
 else
 F_OPTS = -fomit-frame-pointer -ffunction-sections -ffast-math -fsingle-precision-constant -fsigned-char 
 ifeq "$(OSTYPE)" "a320od"	
-CC_OPTS	= -O2 -mips32 -msoft-float -G0 -DC_CORE -DFINAL_VERSION -DSDL -D_OPENDINGUX_  -D_VIDOD16_ -fpermissive $(F_OPTS)
+CC_OPTS	= -O2 -mips32 -mhard-float -G0 -DC_CORE -DFINAL_VERSION -DSDL -D_OPENDINGUX_  -D_VIDOD16_ -fpermissive $(F_OPTS)
 else
 CC_OPTS	= -O2 -mips32 -mhard-float -G0 -DC_CORE -DFINAL_VERSION -DSDL -D_OPENDINGUX_ -D_VIDOD32_ -fpermissive $(F_OPTS)
 endif

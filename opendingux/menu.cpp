@@ -194,7 +194,7 @@ MENUITEM MainMenuItems[] = {
 	{"Ratio: ", (int *) &GameConf.m_ScreenRatio, 1, (char *) &mnuRatio, NULL},
 	{"Button Settings", NULL, 0, NULL, &screen_showkeymenu},
 	{"Take Screenshot", NULL, 0, NULL, &menuSaveBmp},
-	{"Show FPS: ", (int *) &GameConf.m_DisplayFPS, 1,(char *) &mnuYesNo, NULL},
+	{"Show FPS: ", (int *) &GameConf.m_DisplayFPS, 0,(char *) &mnuYesNo, NULL},
 	{"Exit", NULL, 0, NULL, &menuQuit}
 };
 MENU mnuMainMenu = { 8, 0, (MENUITEM *) &MainMenuItems };
@@ -266,17 +266,24 @@ static void SDL_DrawLine(SDL_Surface *s, unsigned int x1, unsigned int y1, unsig
 //----------------------------------------------------------------------------------------------------
 // Prints char on a given surface
 void screen_showchar(SDL_Surface *s, int x, int y, unsigned char a, int fg_color, int bg_color) {
-	unsigned short *dst;
+	unsigned short *dst, *dst2;
 	int w, h;
+	y = y * 2;
+
+	dst = (unsigned short *)s->pixels + y*s->w + x;
 
 	//if(SDL_MUSTLOCK(s)) SDL_LockSurface(s);
 	for(h = 8; h; h--) {
-		dst = (unsigned short *)s->pixels + (y+8-h)*s->w + x;
+		dst2 = dst - 320;
 		for(w = 8; w; w--) {
 			unsigned short color = *dst; // background
 			if((fontdata8x8[a*8 + (8-h)] >> w) & 1) color = fg_color;
 			*dst++ = color;
+			*dst2++ = color;
+
 		}
+		dst = dst + 632;	// (320 * 2) - 8
+
 	}
 	//if(SDL_MUSTLOCK(s)) SDL_UnlockSurface(s);
 }
@@ -336,9 +343,25 @@ void screen_prepback(SDL_Surface *s, unsigned char *bmpBuf, unsigned int bmpSize
 	SDL_Surface *image;
 	image = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
+
+	Uint16 *image_pixels = image->pixels;
+	Uint16 *s_pixels = s->pixels;
+
+	for(int h = 0; h < 240; h++)
+		{
+		Uint16 *s_pixels2 = s_pixels + 320;
+		for(int w = 0; w < 320; w++)
+			{
+			*s_pixels = *s_pixels2 = *image_pixels;
+			s_pixels++;
+			s_pixels2++;
+			image_pixels++;
+			}
+		s_pixels = s_pixels2;
+		}
 	
 	// Display image
- 	SDL_BlitSurface(image, 0, s, 0);
+ 	//SDL_BlitSurface(image, 0, s, 0);
 	SDL_FreeSurface(image);
 }
 
@@ -950,7 +973,7 @@ void system_loadcfg(char *cfg_name) {
 	   
 		GameConf.sndLevel=40;
 		GameConf.m_ScreenRatio=1; // 0 = original show, 1 = full screen
-		GameConf.m_DisplayFPS=1; // 0 = no
+		GameConf.m_DisplayFPS=0; // 0 = no
 		getcwd(GameConf.current_dir_rom, MAX__PATH);
 	}
 }

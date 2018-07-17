@@ -33,15 +33,15 @@
 #define PIX_TO_RGB(fmt, r, g, b) (((r>>fmt->Rloss)<<fmt->Rshift)| ((g>>fmt->Gloss)<<fmt->Gshift)|((b>>fmt->Bloss)<<fmt->Bshift))
 
 // Stella dependencies
-#include "Console.hxx"
-#include "Joystick.hxx"
-#include "Mediasrc.hxx"
-#include "Paddles.hxx"
-#include "Sound.hxx"
-#include "SoundSDL.hxx"
-#include "Event.hxx"
-#include "StellaEvent.hxx"
-#include "EventHandler.hxx"
+#include "../emucore/Console.hxx"
+#include "../emucore/Joystick.hxx"
+#include "../emucore/MediaSrc.hxx"
+#include "../emucore/Paddles.hxx"
+#include "../emucore/Sound.hxx"
+#include "../common/SoundSDL.hxx"
+#include "../emucore/Event.hxx"
+#include "../emucore/StellaEvent.hxx"
+#include "../emucore/EventHandler.hxx"
 
 extern Console* theConsole;
 extern Sound* theSDLSnd;

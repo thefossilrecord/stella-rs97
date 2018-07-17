@@ -20,10 +20,10 @@
 
 #include <stdio.h>
 
-#include "TIASound.hxx"
+#include "../emucore/TIASound.hxx"
 //JGD #include "TIASnd.hxx"
-#include "Console.hxx"
-#include "System.hxx"
+#include "../emucore/Console.hxx"
+#include "../emucore/System.hxx"
 #include "SoundSDL.hxx"
 #include <math.h>
 
